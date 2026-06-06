@@ -14,7 +14,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
-    name="masonite",
+    name="masonite-framework",
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
@@ -24,10 +24,16 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     # The project's main homepage.
-    url="https://github.com/masoniteframework/masonite",
+    url="https://github.com/masonitedev/masonite",
+    project_urls={
+        "Documentation": "https://github.com/masonitedev/masonite",
+        "Source": "https://github.com/masonitedev/masonite",
+    },
     # Author details
     author="Joe Mancuso",
-    author_email="joe@masoniteproject.com",
+    author_email="contact@masonite.dev",
+    maintainer="Eduardo Aguad",
+    maintainer_email="contact@masonite.dev",
     # Choose your license
     license="MIT",
     # If your package should include things you specify in your MANIFEST.in file
@@ -77,7 +83,6 @@ setup(
         "Operating System :: OS Independent",
         # Specify the Python versions you support here. In particular, ensure
         # that you indicate whether you support Python 2, Python 3 or both.
-        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
@@ -85,7 +90,7 @@ setup(
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
     # What does your project relate to?
-    keywords="Masonite, MasoniteFramework, Python, ORM",
+    keywords="Masonite, masonite-framework, Python, Web Framework",
     # You can just specify the packages manually here if your project is
     # simple. Or you can use find_packages().
     packages=[

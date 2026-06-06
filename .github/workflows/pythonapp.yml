@@ -10,9 +10,9 @@ jobs:
         python-version: ["3.8", "3.9", "3.10", "3.11"]
     name: Python ${{ matrix.python-version }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
           path: ~/test
@@ -21,10 +21,10 @@ jobs:
           make init
       - name: Test with pytest
         env:
-          MAIL_HOST: ${{ github.secrets.MAIL_HOST }}
-          MAIL_PORT: ${{ github.secrets.MAIL_PORT }}
-          MAIL_USERNAME: ${{ github.secrets.MAIL_USERNAME }}
-          MAIL_PASSWORD: ${{ github.secrets.MAIL_PASSWORD }}
+          MAIL_HOST: ${{ secrets.MAIL_HOST }}
+          MAIL_PORT: ${{ secrets.MAIL_PORT }}
+          MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+          MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
           DB_CONFIG_PATH: tests/integrations/config/database
         run: |
           make ci
@@ -32,9 +32,9 @@ jobs:
     runs-on: ubuntu-latest
     name: Lint
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up latest Python 3.X
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v5
         with:
           python-version: "3.x"
       - name: Install Flake8

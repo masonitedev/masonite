@@ -22,7 +22,7 @@ class ProjectCommand(Command):
         {target? : Path of you Masonite project}
         {--b|--branch=False : Specify which branch from the Masonite repo you would like to install}
         {--r|--release=False : Specify which version of Masonite you would like to install}
-        {--repo=MasoniteFramework/cookie-cutter : Specify from which repository you want to craft your project}
+        {--repo=masonitedev/cookie-cutter : Specify from which repository you want to craft your project}
         {--p|--provider=github : Specify from which repository you want to craft your project github, gitlab }
     """
 
@@ -62,7 +62,7 @@ class ProjectCommand(Command):
 
             # find cookie-cutter version to use when doing 'craft new' only
             if (
-                repo == "MasoniteFramework/cookie-cutter"
+                repo == "masonitedev/cookie-cutter"
                 and provider == "github"
                 and branch == "False"
                 and version == "False"
@@ -125,7 +125,7 @@ class ProjectCommand(Command):
             )
         except Exception as e:
             self.error(
-                "The following error happened when crafting your project. Verify options are correct else open an issue at https://github.com/MasoniteFramework/masonite."
+                "The following error happened when crafting your project. Verify options are correct else open an issue at https://github.com/masonitedev/masonite."
             )
             raise e
 

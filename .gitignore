@@ -8,7 +8,7 @@ venv
 **/storage/framework/cache
 .pytest_cache/
 **/storage/framework/filesystem
-src/masonite.egg-info/*
+src/*.egg-info/
 .vscode
 build/
 venv4

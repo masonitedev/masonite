@@ -3,10 +3,10 @@
   <h1 align="center">Masonite</h1>
 </p>
 <p align="center">
-  <img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/MasoniteFramework/masonite/pythonapp.yml">
+  <img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/masonitedev/masonite/pythonapp.yml">
 
-  <img alt="GitHub release (latest by date including pre-releases)" src="https://img.shields.io/github/v/release/MasoniteFramework/masonite?include_prereleases">
-  <img src="https://img.shields.io/github/license/MasoniteFramework/masonite.svg" alt="License">
+  <img alt="GitHub release (latest by date including pre-releases)" src="https://img.shields.io/github/v/release/masonitedev/masonite?include_prereleases">
+  <img src="https://img.shields.io/github/license/masonitedev/masonite.svg" alt="License">
   <a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
 </p>
 
@@ -24,18 +24,16 @@ Stop using old frameworks with just a few confusing features. Masonite is the de
 
 ## Learning Masonite
 
-New to Masonite? Read the [Official Documentation](https://docs.masoniteproject.com/).
+New to Masonite? Check out the [official repository](https://github.com/masonitedev/masonite).
 Masonite strives to have extremely clear documentation 😃. It would be wise to go through the tutorials there.
 If you find any discrepencies or anything that doesn't make sense, please open an issue and we will get it cleared up!
-
-Have questions or want to talk? Be sure to join the [Masonite Discord Community](https://discord.gg/TwKeFahmPZ)!
 
 ## Getting Started Quickly
 
 Create and activate a virtual environment and if you have a working Python <= 3.11 installation then getting started is as quick as typing
 
 ```bash
-pip install masonite
+pip install masonite-framework
 project start .
 python craft serve
 ```
@@ -44,20 +42,14 @@ python craft serve
 
 Contributing to Masonite is simple:
 
-- Hop on [Masonite Discord Community](https://discord.gg/TwKeFahmPZ) to ask any questions you need!
-- Read the [How To Contribute](https://docs.masoniteproject.com/prologue/how-to-contribute) documentation to see ways to contribute to the project.
-- Read the [Contributing Guide](https://docs.masoniteproject.com/prologue/contributing-guide) to learn how to contribute to the core source code development of the project.
-- [Follow Masonite Framework on X](https://x.com/masoniteproject) to get updates about tips and tricks, announcement and releases.
+- Read the [Contributing Guide](https://github.com/masonitedev/masonite/blob/4.0/CONTRIBUTING.md) to learn how to contribute to the core source code development of the project.
+- Open an [issue](https://github.com/masonitedev/masonite/issues) or a [pull request](https://github.com/masonitedev/masonite/pulls) to ask questions, report bugs or propose changes.
 
 ## Core Maintainers
 
 - [Joseph Mancuso](https://github.com/josephmancuso) (Author)
 - [Samuel Girardin](https://github.com/girardinsamuel)
 - [Marlysson Silva](https://github.com/Marlysson)
-
-## Sponsors
-
-To become a sponsor head to our [GitHub Sponsors page](https://github.com/sponsors/MasoniteFramework)!
 
 ## Security Vulnerabilities
 
