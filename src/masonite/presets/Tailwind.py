@@ -1,4 +1,5 @@
 """Tailwind Preset"""
+import os
 import shutil
 
 from ..utils.filesystem import make_full_directory
@@ -12,22 +13,22 @@ class Tailwind(Preset):
     """
 
     key = "tailwind"
-    packages = {"tailwindcss": "^3.0.7", "postcss": "^8.4.5", "autoprefixer": "^10.4.0"}
+    packages = {"tailwindcss": "^4.3.0", "@tailwindcss/vite": "^4.3.0"}
+    removed_packages = ["postcss", "autoprefixer", "laravel-mix"]
 
     def install(self):
         """Install the preset"""
         self.update_packages(dev=True)
-        self.update_webpack_mix()
-        self.add_tailwind_config()
+        self.update_vite_config()
         self.update_css()
+        self.remove_legacy_config()
         self.remove_node_modules()
 
-    def add_tailwind_config(self):
-        """Copy example Tailwind configuration into application."""
-        shutil.copyfile(
-            self.get_template_path("tailwind.config.js"),
-            base_path("tailwind.config.js"),
-        )
+    def remove_legacy_config(self):
+        """Tailwind 4 is configured in CSS: drop the v3 config file if present."""
+        legacy_config = base_path("tailwind.config.js")
+        if os.path.exists(legacy_config):
+            os.remove(legacy_config)
 
     def update_css(self):
         """Create/Override an app.css file configured for the preset."""

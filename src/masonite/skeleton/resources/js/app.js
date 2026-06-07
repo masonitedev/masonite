@@ -1,1 +1,2 @@
-require("./bootstrap.js")
+import './bootstrap.js'
+import '../css/app.css'

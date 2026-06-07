@@ -13,17 +13,23 @@ class Bootstrap(Preset):
 
     key = "bootstrap"
     packages = {
-        "bootstrap": "^5.1.3",
-        "resolve-url-loader": "^4.0.0",
-        "sass": "^1.45.1",
-        "sass-loader": "^12.4.0",
+        "bootstrap": "^5.3.0",
+        "sass": "^1.80.0",
     }
+    removed_packages = [
+        "tailwindcss",
+        "@tailwindcss/vite",
+        "resolve-url-loader",
+        "sass-loader",
+        "laravel-mix",
+    ]
 
     def install(self):
         """Install the preset"""
         self.update_packages(dev=True)
-        self.update_webpack_mix()
+        self.update_vite_config()
         self.update_css()
+        self.update_js()
         self.remove_node_modules()
 
     def update_css(self):

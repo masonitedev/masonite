@@ -16,11 +16,16 @@ class Remove(Preset):
         "sass-loader",
         "vue",
         "vue-loader",
+        "@vitejs/plugin-vue",
         "react",
         "react-dom",
         "@babel/preset-react",
+        "@vitejs/plugin-react",
         "tailwindcss",
+        "@tailwindcss/vite",
         "autoprefixer",
+        "postcss",
+        "laravel-mix",
     ]
 
     def install(self):
@@ -28,7 +33,7 @@ class Remove(Preset):
         self.update_packages(dev=True)
         self.update_css()
         self.update_js()
-        self.update_webpack_mix()
+        self.update_vite_config()
         self.remove_node_modules()
         self.remove_all_presets_file()
 
@@ -38,6 +43,7 @@ class Remove(Preset):
             "css/app.scss",
             "js/components/HelloWorld.vue",
             "js/components/Example.js",
+            "js/components/Example.jsx",
             "js/App.vue",
         ]
         for f in presets_resources_files:
@@ -45,6 +51,7 @@ class Remove(Preset):
             if os.path.exists(filepath):
                 os.remove(filepath)
 
-        tailwind_config = base_path("tailwind.config.js")
-        if os.path.exists(tailwind_config):
-            os.remove(tailwind_config)
+        for legacy_file in ("tailwind.config.js", "webpack.mix.js"):
+            filepath = base_path(legacy_file)
+            if os.path.exists(filepath):
+                os.remove(filepath)

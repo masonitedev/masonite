@@ -100,14 +100,14 @@ class TestNewCommand(TestCase):
         project = self.project_path()
         self.craft("new", f"{project} --preset=none {NO_WIZARD}").assertSuccess()
         assert not os.path.isfile(os.path.join(project, "package.json"))
-        assert not os.path.isfile(os.path.join(project, "webpack.mix.js"))
+        assert not os.path.isfile(os.path.join(project, "vite.config.js"))
         assert not os.path.isdir(os.path.join(project, "resources"))
 
     def test_default_preset_is_tailwind(self):
         project = self.project_path()
         self.craft("new", f"{project} {NO_WIZARD}").assertSuccess()
-        assert os.path.isfile(os.path.join(project, "tailwind.config.js"))
-        assert "@tailwind" in self.read(project, "resources/css/app.css")
+        assert os.path.isfile(os.path.join(project, "vite.config.js"))
+        assert '@import "tailwindcss"' in self.read(project, "resources/css/app.css")
 
     def test_craft_into_current_directory(self):
         os.chdir(self.directory)

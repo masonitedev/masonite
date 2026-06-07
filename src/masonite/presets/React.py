@@ -16,16 +16,16 @@ class React(Preset):
 
     key = "react"
     packages = {
-        "react": "^17.0.2",
-        "react-dom": "^17.0.2",
-        "@babel/preset-react": "^7.16.5",
+        "react": "^19.0.0",
+        "react-dom": "^19.0.0",
+        "@vitejs/plugin-react": "^5.0.0",
     }
-    removed_packages = ["vue", "vue-loader"]
+    removed_packages = ["vue", "vue-loader", "@vitejs/plugin-vue", "@babel/preset-react"]
 
     def install(self):
         """Install the preset"""
         self.update_packages(dev=True)
-        self.update_webpack_mix()
+        self.update_vite_config()
         self.update_js()
         self.add_components()
         self.update_css()
@@ -36,21 +36,22 @@ class React(Preset):
         """Copy example React component into application (delete example Vue component
         if it exists)"""
         # make components directory if does not exists
-        make_directory(resources_path("js/components/Example.js"))
+        make_directory(resources_path("js/components/Example.jsx"))
 
-        # delete Vue components if exists
-        vue_files = [
+        # delete Vue components and the legacy React component if they exist
+        old_files = [
             resources_path("js/components/HelloWorld.vue"),
             resources_path("js/App.vue"),
-        ]
-        for vue_file in vue_files:
-            if os.path.exists(vue_file):
-                os.remove(vue_file)
-
-        # add Vue components
-        shutil.copyfile(
-            self.get_template_path("Example.js"),
             resources_path("js/components/Example.js"),
+        ]
+        for old_file in old_files:
+            if os.path.exists(old_file):
+                os.remove(old_file)
+
+        # add React component
+        shutil.copyfile(
+            self.get_template_path("Example.jsx"),
+            resources_path("js/components/Example.jsx"),
         )
 
     def create_view(self):

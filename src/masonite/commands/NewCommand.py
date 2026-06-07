@@ -700,7 +700,12 @@ class NewCommand(DownloadProjectMixin, Command):
             )
 
     def _remove_frontend(self, to_dir):
-        for file in ("package.json", "webpack.mix.js", "tailwind.config.js"):
+        for file in (
+            "package.json",
+            "vite.config.js",
+            "webpack.mix.js",
+            "tailwind.config.js",
+        ):
             path = os.path.join(to_dir, file)
             if os.path.isfile(path):
                 os.remove(path)

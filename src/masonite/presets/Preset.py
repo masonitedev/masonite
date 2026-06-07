@@ -25,10 +25,10 @@ class Preset:
     def get_template_path(self, template):
         return os.path.join(self.get_stubs_directory(), template)
 
-    def update_webpack_mix(self):
-        """Replace webpack.mix.js with the one from preset."""
+    def update_vite_config(self):
+        """Replace vite.config.js with the one from preset."""
         shutil.copyfile(
-            self.get_template_path("webpack.mix.js"), base_path("webpack.mix.js")
+            self.get_template_path("vite.config.js"), base_path("vite.config.js")
         )
 
     def update_packages(self, dev=True):

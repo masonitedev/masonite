@@ -15,13 +15,19 @@ class Vue(Preset):
     """
 
     key = "vue"
-    packages = {"vue": "^3.2.26", "vue-loader": "^16.8.3"}
-    removed_packages = ["@babel/preset-react", "react", "react-dom"]
+    packages = {"vue": "^3.5.0", "@vitejs/plugin-vue": "^6.0.0"}
+    removed_packages = [
+        "@babel/preset-react",
+        "@vitejs/plugin-react",
+        "react",
+        "react-dom",
+        "vue-loader",
+    ]
 
     def install(self):
         """Install the preset"""
         self.update_packages(dev=True)
-        self.update_webpack_mix()
+        self.update_vite_config()
         self.update_js()
         self.add_components()
         self.update_css()
