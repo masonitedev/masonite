@@ -1,6 +1,6 @@
 """Route List Command"""
 import re
-from cleo import Command
+from ...commands.Command import Command
 
 from ...utils.str import get_controller_name
 

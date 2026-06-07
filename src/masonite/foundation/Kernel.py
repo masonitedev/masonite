@@ -1,5 +1,5 @@
 import os
-from cleo import Application as CommandApplication
+from cleo.application import Application as CommandApplication
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:

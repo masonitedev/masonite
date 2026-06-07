@@ -1,5 +1,5 @@
 """New Listener Command."""
-from cleo import Command
+from ...commands.Command import Command
 import inflection
 import os
 

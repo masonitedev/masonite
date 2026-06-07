@@ -5,7 +5,7 @@ This can be used by running "python craft". This module is not ran when the CLI 
 successfully import commands for you.
 """
 
-from cleo import Application
+from cleo.application import Application
 
 from .. import __version__
 from .InstallCommand import InstallCommand

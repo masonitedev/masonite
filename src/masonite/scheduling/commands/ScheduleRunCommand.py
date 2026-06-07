@@ -1,5 +1,5 @@
 """ A ScheduleRunCommand Command """
-from cleo import Command
+from ...commands.Command import Command
 
 
 class ScheduleRunCommand(Command):

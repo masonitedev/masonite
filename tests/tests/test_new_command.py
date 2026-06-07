@@ -2,7 +2,7 @@ import os
 import shutil
 import tempfile
 
-from cleo import Application as CommandApplication
+from cleo.application import Application as CommandApplication
 
 from src.masonite.commands import CommandCapsule
 from src.masonite.commands.NewCommand import NewCommand

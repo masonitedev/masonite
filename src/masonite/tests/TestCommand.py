@@ -1,4 +1,4 @@
-from cleo import CommandTester
+from cleo.testers.command_tester import CommandTester
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -16,6 +16,8 @@ class TestCommand:
         one string (space separated)."""
         command = self.application.make("commands").command_application.find(command)
         self.command_tester = CommandTester(command)
+        self._output = ""
+        self._errors = ""
         self.command_tester.execute(arguments_str)
         return self
 
@@ -59,7 +61,11 @@ class TestCommand:
         return self
 
     def _get_errors(self) -> str:
-        return self.command_tester.io.fetch_error()
+        # fetch_error() drains the buffer in cleo 2, so accumulate it
+        self._errors += self.command_tester.io.fetch_error()
+        return self._errors
 
     def _get_output(self) -> str:
-        return self.command_tester.io.fetch_output()
+        # fetch_output() drains the buffer in cleo 2, so accumulate it
+        self._output += self.command_tester.io.fetch_output()
+        return self._output

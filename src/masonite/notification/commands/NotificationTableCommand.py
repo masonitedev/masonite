@@ -1,5 +1,5 @@
 """Notification Table Command."""
-from cleo import Command
+from ...commands.Command import Command
 import os
 
 from ...utils.filesystem import get_module_dir, make_directory

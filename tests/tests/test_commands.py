@@ -1,5 +1,5 @@
-from cleo import Command
-from cleo import Application as CommandApplication
+from src.masonite.commands.Command import Command
+from cleo.application import Application as CommandApplication
 from src.masonite.commands import CommandCapsule
 from tests import TestCase
 

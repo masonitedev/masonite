@@ -1,4 +1,4 @@
-from cleo.commands import Command
+from src.masonite.commands.Command import Command
 
 
 class Command2(Command):
