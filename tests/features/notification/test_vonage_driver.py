@@ -42,19 +42,6 @@ class OtherNotification(Notification):
         return ["vonage"]
 
 
-class VonageAPIMock(object):
-    @staticmethod
-    def send_success():
-        return {"hoho": "hihi", "message-count": 1, "messages": [{"status": "0"}]}
-
-    @staticmethod
-    def send_error(error="Missing api_key", status=2):
-        return {
-            "message-count": 1,
-            "messages": [{"status": str(status), "error-text": error}],
-        }
-
-
 class TestVonageDriver(TestCase):
     def setUp(self):
         super().setUp()
@@ -66,32 +53,27 @@ class TestVonageDriver(TestCase):
                 WelcomeNotification()
             )
         error_message = str(e.exception)
-        self.assertIn("Code [2]", error_message)
+        self.assertIn("Vonage Error", error_message)
+        self.assertIn("error code", error_message)
 
     def test_send_to_anonymous(self):
-        with patch("vonage.sms.Sms") as MockSmsClass:
-            MockSmsClass.return_value.send_message.return_value = (
-                VonageAPIMock().send_success()
-            )
+        with patch("vonage.Vonage") as MockVonageClass:
             self.notification.route("vonage", "+33123456789").send(
                 WelcomeNotification()
             )
+            MockVonageClass.return_value.sms.send.assert_called_once()
 
     def test_send_to_notifiable(self):
-        with patch("vonage.sms.Sms") as MockSmsClass:
-            MockSmsClass.return_value.send_message.return_value = (
-                VonageAPIMock().send_success()
-            )
+        with patch("vonage.Vonage") as MockVonageClass:
             user = User.find(1)
             user.notify(WelcomeUserNotification())
+            MockVonageClass.return_value.sms.send.assert_called_once()
 
     def test_send_to_notifiable_with_route_notification_for(self):
-        with patch("vonage.sms.Sms") as MockSmsClass:
-            MockSmsClass.return_value.send_message.return_value = (
-                VonageAPIMock().send_success()
-            )
+        with patch("vonage.Vonage") as MockVonageClass:
             user = User.find(1)
             user.notify(WelcomeNotification())
+            MockVonageClass.return_value.sms.send.assert_called_once()
 
     def test_global_send_from_is_used_when_not_specified(self):
         notifiable = self.notification.route("vonage", "+33123456789")
@@ -99,3 +81,30 @@ class TestVonageDriver(TestCase):
             notifiable, OtherNotification()
         )
         self.assertEqual(sms._from, "+33000000000")
+
+    def test_build_message_maps_sms_component_options(self):
+        from vonage_sms import SmsMessage
+
+        driver = self.notification.get_driver("vonage")
+        sms = (
+            Sms()
+            .text("Welcome !")
+            .from_("123456")
+            .to("+33123456789")
+            .client_ref("my-ref")
+        )
+        message = driver.build_message(sms.get_options())
+
+        self.assertIsInstance(message, SmsMessage)
+        dumped = message.model_dump(by_alias=True, exclude_none=True)
+        self.assertEqual(dumped["to"], "+33123456789")
+        self.assertEqual(dumped["from"], "123456")
+        self.assertEqual(dumped["text"], "Welcome !")
+        self.assertEqual(dumped["client-ref"], "my-ref")
+
+    def test_invalid_phone_number_raises(self):
+        with self.assertRaises(NotificationException) as e:
+            self.notification.route("vonage", "not-a-number").send(
+                WelcomeNotification()
+            )
+        self.assertIn("Invalid phone number", str(e.exception))

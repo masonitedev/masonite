@@ -22,58 +22,61 @@ class VonageDriver(BaseDriver):
             sms = sms.to(recipients)
         return sms
 
-    def get_sms_client(self):
+    def get_client(self):
         try:
-            import vonage
-            from vonage.sms import Sms
+            from vonage import Auth, Vonage
         except ImportError:
             raise ModuleNotFoundError(
                 "Could not find the 'vonage' library. Run 'pip install vonage' to fix this."
             )
-        client = vonage.Client(
-            key=self.options.get("key"), secret=self.options.get("secret")
+        return Vonage(
+            Auth(
+                api_key=self.options.get("key"),
+                api_secret=self.options.get("secret"),
+            )
         )
-        return Sms(client)
+
+    def build_message(self, options):
+        """Build the Vonage SmsMessage from the Sms component options."""
+        from vonage_sms import SmsMessage
+
+        message_options = {
+            "to": options["to"],
+            "from_": options["from"],
+            "text": options["text"],
+            "type": options["type"],
+        }
+        if options.get("client-ref"):
+            message_options["client_ref"] = options["client-ref"]
+        return SmsMessage(**message_options)
 
     def send(self, notifiable, notification):
         """Used to send the SMS."""
+        from vonage import VonageError
+
         sms = self.build(notifiable, notification)
-        client = self.get_sms_client()
+        client = self.get_client()
         recipients = sms._to
         if not isinstance(recipients, list):
             recipients = [recipients]
+        response = None
         for recipient in recipients:
             if not self.is_valid_phone_number(recipient):
                 raise NotificationException(f"Invalid phone number: {recipient}")
-            payload = sms.to(recipient).build().get_options()
-            response = client.send_message(payload)
-            self._handle_errors(response)
-        return response
-
-    def _handle_errors(self, response):
-        """Handle errors of Vonage API. Raises VonageAPIError if request does
-        not succeed.
-
-        An error message is structured as follows:
-        {'message-count': '1', 'messages': [{'status': '2', 'error-text': 'Missing api_key'}]}
-        As a success message can be structured as follows:
-        {'message-count': '1', 'messages': [{'to': '3365231278', 'message-id': '140000012BD37332', 'status': '0',
-        'remaining-balance': '1.87440000', 'message-price': '0.06280000', 'network': '20810'}]}
-
-        More informations on status code errors: https://developer.nexmo.com/api-errors/sms
-
-        """
-        for message in response.get("messages", []):
-            status = message["status"]
-            if status != "0":
+            message = self.build_message(sms.to(recipient).build().get_options())
+            try:
+                response = client.sms.send(message)
+            except VonageError as e:
                 raise NotificationException(
-                    "Vonage Code [{0}]: {1}. Please refer to API documentation for more details.".format(
-                        status, message["error-text"]
+                    "Vonage Error: {0}. Please refer to API documentation for more details.".format(
+                        str(e)
                     )
                 )
+        return response
 
     def is_valid_phone_number(self, phone_number):
         import phonenumbers
+
         try:
             parsed_number = phonenumbers.parse(phone_number, None)
             return phonenumbers.is_valid_number(parsed_number)

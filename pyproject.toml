@@ -62,13 +62,13 @@ test = [
     "boto3",
     "pusher",
     "pymemcache",
-    "vonage>=3.16,<4",
+    "vonage>=4,<5",
     "slackblocks>=1,<3",
     "argon2-cffi>=23,<26",
     "responses>=0.25,<1",
     "phonenumbers>=8.12,<10",
 ]
-vonage = ["vonage>=3.16,<4", "phonenumbers>=8.12,<10"]
+vonage = ["vonage>=4,<5", "phonenumbers>=8.12,<10"]
 argon2 = ["argon2-cffi>=23,<26"]
 dev = ["flake8", "black", "isort"]
 
