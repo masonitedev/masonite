@@ -131,9 +131,9 @@ class required(BaseValidation):
 
 class timezone(BaseValidation):
     def passes(self, attribute, key, dictionary):
-        import pytz
+        from zoneinfo import available_timezones
 
-        return attribute in pytz.all_timezones
+        return attribute in available_timezones()
 
     def message(self, attribute):
         return "The {} must be a valid timezone.".format(attribute)
