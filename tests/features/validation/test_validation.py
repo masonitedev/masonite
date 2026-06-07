@@ -1,11 +1,13 @@
 import json
 import unittest
 import pendulum
+import responses
 from uuid import uuid1, uuid3, uuid4, uuid5
 
 from tests import TestCase
 
 from src.masonite.validation import RuleEnclosure
+from src.masonite.validation.Validator import password_is_breached
 from src.masonite.validation.providers import ValidationProvider
 from src.masonite.validation import (
     ValidationFactory,
@@ -1909,4 +1911,47 @@ class TestDictValidation(unittest.TestCase):
         self.assertEqual(len(validate), 1)
         self.assertEqual(
             validate.all()["key.*.foo"], ["The key.0.foo field is required."]
+        )
+
+
+class TestPasswordBreachCheck(unittest.TestCase):
+    """Unit tests for the HIBP k-anonymity breach check (mocked, no network)."""
+
+    PREFIX = "E5E9F"  # sha1('secret')[:5]
+    SUFFIX = "A1BA31ECD1AE84F75CAAA474F3A663F05F4"  # sha1('secret')[5:]
+
+    @responses.activate
+    def test_breached_password_is_detected(self):
+        responses.add(
+            responses.GET,
+            f"https://api.pwnedpasswords.com/range/{self.PREFIX}",
+            body=f"0018A45C4D1DEF81644B54AB7F969B88D65:1\n{self.SUFFIX}:12345\n",
+            status=200,
+        )
+        self.assertTrue(password_is_breached("secret"))
+
+    @responses.activate
+    def test_clean_password_passes(self):
+        responses.add(
+            responses.GET,
+            f"https://api.pwnedpasswords.com/range/{self.PREFIX}",
+            body="0018A45C4D1DEF81644B54AB7F969B88D65:1\n",
+            status=200,
+        )
+        self.assertFalse(password_is_breached("secret"))
+
+    @responses.activate
+    def test_strong_rule_reports_breached_password(self):
+        responses.add(
+            responses.GET,
+            f"https://api.pwnedpasswords.com/range/{self.PREFIX}",
+            body=f"{self.SUFFIX}:12345\n",
+            status=200,
+        )
+        validate = Validator().validate(
+            {"password": "secret"}, strong(["password"], breach=True)
+        )
+        self.assertIn(
+            "The password field has been breached in the past. Try another password",
+            validate.get("password"),
         )

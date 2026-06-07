@@ -797,15 +797,7 @@ class strong(BaseValidation):
                 all_clear = False
 
         if self.breach:
-            try:
-                from pwnedapi import Password
-            except ImportError:
-                raise ImportError(
-                    "Checking for breaches requires the 'pwnedapi' library. Please install it with 'pip install pwnedapi'"
-                )
-
-            password = Password(attribute)
-            if password.is_pwned():
+            if password_is_breached(attribute):
                 self.breach_check = False
                 all_clear = False
 
@@ -1012,6 +1004,29 @@ class regex(BaseValidation):
 def parse_size(size):
     """Parse humanized size into bytes"""
     return parse_human_size(size)
+
+
+def password_is_breached(password):
+    """Check a password against Have I Been Pwned using the k-anonymity
+    range API: only the first 5 characters of the SHA-1 digest are sent,
+    never the password itself."""
+    import hashlib
+
+    import requests
+
+    digest = hashlib.sha1(password.encode("utf-8")).hexdigest().upper()
+    prefix, suffix = digest[:5], digest[5:]
+
+    response = requests.get(
+        f"https://api.pwnedpasswords.com/range/{prefix}",
+        headers={"User-Agent": "masonite-framework-validation"},
+        timeout=10,
+    )
+    response.raise_for_status()
+
+    return any(
+        line.split(":")[0] == suffix for line in response.text.splitlines()
+    )
 
 
 class BaseFileValidation(BaseValidation):
