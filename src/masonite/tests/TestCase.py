@@ -3,7 +3,14 @@ import io
 import os
 from pprint import pprint
 import sys
-import pytest
+
+try:
+    import pytest
+except ImportError:
+    raise ModuleNotFoundError(
+        "Could not find the 'pytest' library. Run 'pip install masonite-framework[test]' "
+        "or 'pip install pytest' to use Masonite's TestCase."
+    )
 import unittest
 import pendulum
 from contextlib import contextmanager

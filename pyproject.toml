@@ -15,7 +15,7 @@ dynamic = ["version"]
 dependencies = [
     "inflection>=0.5,<0.6",
     "exceptionite>=3,<4",
-    "pendulum[test]>=3,<4",
+    "pendulum>=3,<4",
     "jinja2>=3.1,<4",
     "cleo>=0.8.1,<0.9",
     "hupper>=1.12,<2",
@@ -30,7 +30,6 @@ dependencies = [
     "dotty_dict>=1.3,<2",
     "pyjwt>=2.8,<3",
     "questionary>=2,<3",
-    "pytest>=8,<9",
     "werkzeug>=3,<4",
     "watchdog>=4,<7",
     "multipart>=1.2,<2",
@@ -57,6 +56,8 @@ Source = "https://github.com/masonitedev/masonite"
 
 [project.optional-dependencies]
 test = [
+    "pytest>=9.0.3,<10",
+    "time-machine>=2,<3",
     "coverage",
     "redis",
     "boto3",
