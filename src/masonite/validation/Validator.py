@@ -7,6 +7,7 @@ from ..filesystem import UploadedFile
 
 from .RuleEnclosure import RuleEnclosure
 from .MessageBag import MessageBag
+from ..utils.filesize import format_human_size, parse_human_size
 from ..utils.structures import data_get, missing_key
 from ..configuration import config
 from ..facades import Loader
@@ -1010,9 +1011,7 @@ class regex(BaseValidation):
 
 def parse_size(size):
     """Parse humanized size into bytes"""
-    from hfilesize import FileSize
-
-    return FileSize(size, case_sensitive=False)
+    return parse_human_size(size)
 
 
 class BaseFileValidation(BaseValidation):
@@ -1068,11 +1067,10 @@ class file(BaseFileValidation):
             messages.append("The {} is not a valid file.".format(attribute.replace("*", str(missing_key(self.dictionary, self.key)))))
 
         if not self.size_check:
-            from hfilesize import FileSize
-
             messages.append(
-                "The {} file size exceeds {:.02fH}.".format(
-                    attribute.replace("*", str(missing_key(self.dictionary, self.key))), FileSize(self.size)
+                "The {} file size exceeds {}.".format(
+                    attribute.replace("*", str(missing_key(self.dictionary, self.key))),
+                    format_human_size(self.size),
                 )
             )
         if not self.mimes_check:
@@ -1089,11 +1087,10 @@ class file(BaseFileValidation):
         if self.file_check:
             messages.append("The {} is a valid file.".format(attribute))
         if self.size_check:
-            from hfilesize import FileSize
-
             messages.append(
-                "The {} file size is less or equal than {:.02fH}.".format(
-                    attribute.replace("*", str(missing_key(self.dictionary, self.key))), FileSize(self.size)
+                "The {} file size is less or equal than {}.".format(
+                    attribute.replace("*", str(missing_key(self.dictionary, self.key))),
+                    format_human_size(self.size),
                 )
             )
         if self.mimes_check:
@@ -1123,11 +1120,10 @@ class image(BaseFileValidation):
             messages.append("The {} is not a valid file.".format(attribute.replace("*", str(missing_key(self.dictionary, self.key)))))
 
         if not self.size_check:
-            from hfilesize import FileSize
-
             messages.append(
-                "The {} file size exceeds {:.02fH}.".format(
-                    attribute.replace("*", str(missing_key(self.dictionary, self.key))), FileSize(self.size)
+                "The {} file size exceeds {}.".format(
+                    attribute.replace("*", str(missing_key(self.dictionary, self.key))),
+                    format_human_size(self.size),
                 )
             )
 
@@ -1145,11 +1141,9 @@ class image(BaseFileValidation):
         if self.file_check:
             messages.append("The {} is a valid file.".format(attribute))
         if self.size_check:
-            from hfilesize import FileSize
-
             messages.append(
-                "The {} file size is less or equal than {:.02fH}.".format(
-                    attribute, FileSize(self.size)
+                "The {} file size is less or equal than {}.".format(
+                    attribute, format_human_size(self.size)
                 )
             )
 
@@ -1179,11 +1173,10 @@ class video(BaseFileValidation):
             messages.append("The {} is not a valid file.".format(attribute.replace("*", str(missing_key(self.dictionary, self.key)))))
 
         if not self.size_check:
-            from hfilesize import FileSize
-
             messages.append(
-                "The {} file size exceeds {:.02fH}.".format(
-                    attribute.replace("*", str(missing_key(self.dictionary, self.key))), FileSize(self.size)
+                "The {} file size exceeds {}.".format(
+                    attribute.replace("*", str(missing_key(self.dictionary, self.key))),
+                    format_human_size(self.size),
                 )
             )
 
@@ -1202,11 +1195,10 @@ class video(BaseFileValidation):
             messages.append("The {} is a valid file.".format(attribute.replace("*", str(missing_key(self.dictionary, self.key)))))
 
         if self.size_check:
-            from hfilesize import FileSize
-
             messages.append(
-                "The {} file size is less or equal than {:.02fH}.".format(
-                    attribute.replace("*", str(missing_key(self.dictionary, self.key))), FileSize(self.size)
+                "The {} file size is less or equal than {}.".format(
+                    attribute.replace("*", str(missing_key(self.dictionary, self.key))),
+                    format_human_size(self.size),
                 )
             )
 
