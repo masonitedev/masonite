@@ -10,6 +10,18 @@ DRIVERS = {
         "poll": 5,
         "tz": "UTC",
     },
+    "redis": {
+        "host": env("REDIS_HOST", "127.0.0.1"),
+        "port": env("REDIS_PORT", "6379"),
+        "password": env("REDIS_PASSWORD", ""),
+        # See https://redis.readthedocs.io/en/stable/connections.html
+        # for valid connection options values
+        "options": {},
+        "failed_table": "failed_jobs",
+        "attempts": 3,
+        "poll": 1,
+        "tz": "UTC",
+    },
     "amqp": {
         "username": env("QUEUE_USERNAME", "guest"),
         "password": env("QUEUE_PASSWORD", "guest"),

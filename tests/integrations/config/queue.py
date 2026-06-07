@@ -9,7 +9,17 @@ DRIVERS = {
         "tz": "UTC",
     },
     "redis": {
-        #
+        "host": "127.0.0.1",
+        "port": "6379",
+        "password": "",
+        # See https://redis.readthedocs.io/en/stable/connections.html
+        # for valid connection options values
+        "options": {},
+        "namespace": "masonite4",
+        "failed_table": "failed_jobs",
+        "attempts": 3,
+        "poll": 1,
+        "tz": "UTC",
     },
     "amqp": {
         "username": "guest",
