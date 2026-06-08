@@ -42,3 +42,14 @@ class TestStructures(TestCase):
         dotted_struct["new_key.nested"] = 3
         self.assertEqual(dotted_struct.get("new_key.nested"), 3)
         self.assertEqual(dotted_struct, {"key": "val", "new_key": {"nested": 3}})
+
+    def test_data_without_argument_is_isolated(self):
+        # A mutable default argument would make every bare data() share one
+        # dict, leaking keys between unrelated callers (e.g. Configuration
+        # instances).
+        first = data()
+        first["leaked.key"] = "value"
+
+        second = data()
+        self.assertEqual(second, {})
+        self.assertIsNone(second.get("leaked.key"))

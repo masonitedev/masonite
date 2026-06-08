@@ -47,7 +47,7 @@ def load(path, object_name=None, default=None, raise_exception=False):
                 return default
 
 
-def data(dictionary={}):
+def data(dictionary=None):
     """Transform the given dictionary to be read/written with dot notation.
 
     Arguments:
@@ -56,6 +56,11 @@ def data(dictionary={}):
     Returns:
         {dict} -- A dot dictionary
     """
+    # Use a fresh dict per call when none is given: a mutable default argument
+    # would be shared across every call, leaking keys between unrelated
+    # ``data()`` (and therefore ``Configuration``) instances.
+    if dictionary is None:
+        dictionary = {}
     return dotty(dictionary)
 
 
