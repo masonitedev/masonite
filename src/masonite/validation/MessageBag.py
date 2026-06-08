@@ -4,7 +4,12 @@ import json
 
 
 class MessageBag:
-    def __init__(self, items={}):
+    def __init__(self, items=None):
+        # A mutable default would be shared across every MessageBag() created
+        # without explicit items, and add()/merge() mutate self.items in place —
+        # so errors would leak between unrelated bags. Build a fresh dict.
+        if items is None:
+            items = {}
         self.items = items
 
     def add(self, error, message):
