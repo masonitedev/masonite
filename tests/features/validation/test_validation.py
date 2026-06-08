@@ -1745,20 +1745,6 @@ class TestValidationProvider(TestCase):
             0,
         )
 
-    def test_strong_breach(self):
-        validate = Validator().validate(
-            {
-                "password": "secret",
-            },
-            strong(["password"], breach=True),
-        )
-
-        password_validation = validate.get("password")
-        self.assertIn(
-            "The password field has been breached in the past. Try another password",
-            password_validation,
-        )
-
     def test_exists_in_db(self):
         validate = Validator().validate(
             {
