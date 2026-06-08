@@ -10,6 +10,16 @@ class TestMessageBag(unittest.TestCase):
         self.bag.add("email", "Your email is invalid")
         self.assertEqual(self.bag.items, {"email": ["Your email is invalid"]})
 
+    def test_separate_bags_do_not_share_state(self):
+        # A mutable default argument would make every MessageBag() share one
+        # dict, so errors added to one bag would leak into the next.
+        first = MessageBag()
+        first.add("email", "Your email is invalid")
+
+        second = MessageBag()
+        self.assertEqual(second.items, {})
+        self.assertFalse(second.any())
+
     def test_message_bag_can_add_several_errors_and_messages(self):
         self.bag.add("email", "Your email is invalid")
         self.bag.add("email", "Your email is invalid")
