@@ -42,10 +42,26 @@ class TestStringsUtils(TestCase):
             "https://example.com/c/pay/cs_teAIXs#fid2cGd2ZndsdXFsamtQa2x0cGBrYHZ2QGtkZ2lgYSc%2FY2RpdmApJ2R1bE5gfCc%2FJ3VuWnFgdnFac2FiQF9fbWppSTxkc01tcWRTMzA9fVdgNTVHfXJWcGhUPCcpJ2N3amhWYHdzYHcnP3F3cGApJ2lkfGpwcVF8dWAnPyd2bGtiaWBabHFgaCcpJ2BrZGdpYFVpZGZgbWppYWB3dic%2FcXdwYHgl",
             "https://example.com?a=b",
             "https://example.com/",
+            # a non-default port must survive an empty add (e.g. presigned S3/MinIO URLs)
+            "http://127.0.0.1:9000/bucket/key?X-Amz-Signature=abc",
+            # userinfo must survive too
+            "http://user:pass@example.com:8080/path?a=b",
         ]
 
         for url in test_urls:
             self.assertEqual(url, add_query_params(url, {}))
+
+    def test_add_query_params_preserves_port_and_userinfo(self):
+        # Regression: the URL was rebuilt from `hostname`, dropping the port and
+        # userinfo (so http://host:9000 became http://host).
+        self.assertEqual(
+            "http://127.0.0.1:9000/bucket/key?a=b",
+            add_query_params("http://127.0.0.1:9000/bucket/key", {"a": "b"}),
+        )
+        self.assertEqual(
+            "http://user:pass@example.com:8080/path",
+            add_query_params("http://user:pass@example.com:8080/path", {}),
+        )
 
     def test_add_query_params_add_params(self):
         test_urls = [
