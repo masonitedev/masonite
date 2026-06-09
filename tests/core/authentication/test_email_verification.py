@@ -4,7 +4,7 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 from src.masonite.auth import Sign, MustVerifyEmail
-from src.masonite.exceptions import InvalidToken
+from src.masonite.exceptions import InvalidSecretKey, InvalidToken
 from src.masonite.middleware import VerifiesEmailMiddleware
 
 # `src.masonite.auth` re-exports the MustVerifyEmail *class*, which shadows the
@@ -125,6 +125,27 @@ class TestSign(unittest.TestCase):
 
     def test_different_values_produce_different_tokens(self):
         self.assertNotEqual(self.sign.sign("1::1000"), self.sign.sign("2::1000"))
+
+    def test_missing_key_does_not_raise_on_construction(self):
+        # Regression: a fresh install boots with an empty APP_KEY; Sign must
+        # construct without raising so that `craft key` can run to generate one.
+        fake_app = MagicMock()
+        fake_app.make.return_value = ""
+        with patch.dict(sys.modules, {"wsgi": MagicMock(application=fake_app)}):
+            sign = Sign()  # no key passed -> resolves "" from the container
+        self.assertEqual(sign.key, "")
+
+    def test_sign_without_key_raises(self):
+        sign = Sign(key=TEST_KEY)
+        sign.key = ""
+        with self.assertRaises(InvalidSecretKey):
+            sign.sign("payload")
+
+    def test_unsign_without_key_raises(self):
+        sign = Sign(key=TEST_KEY)
+        sign.key = ""
+        with self.assertRaises(InvalidSecretKey):
+            sign.unsign("payload")
 
 
 # ---------------------------------------------------------------------------

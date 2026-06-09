@@ -16,8 +16,10 @@ class Sign:
             key {string} -- The secret key to use. If nothing is passed it then it will use
                             the secret key from the config file. (default: {None})
 
-        Raises:
-            InvalidSecretKey -- Thrown if the secret key does not exist.
+        Note:
+            A missing key is not validated here. The check is deferred to
+            ``sign``/``unsign`` so the application can boot without a key set
+            (e.g. on a fresh install before ``craft key`` has been run).
         """
         if key:
             self.key = key
@@ -26,12 +28,18 @@ class Sign:
 
             self.key = application.make("key")
 
+        self.encryption = None
+
+    def _require_key(self):
+        """Ensure a secret key is present before signing or unsigning.
+
+        Raises:
+            InvalidSecretKey -- Thrown if the secret key does not exist.
+        """
         if not self.key:
             raise InvalidSecretKey(
                 "The encryption key passed in is: None. Be sure there is a secret key present in your .env file or your config/application.py file."
             )
-
-        self.encryption = None
 
     def sign(self, value):
         """Sign a value using the secret key.
@@ -43,8 +51,9 @@ class Sign:
             string -- Returns the encrypted value.
 
         Raises:
-            InvalidSecretKey -- Thrown if the secret key has incorrect padding.
+            InvalidSecretKey -- Thrown if the secret key is missing or has incorrect padding.
         """
+        self._require_key()
         try:
             f = Fernet(self.key)
         except (binascii.Error, ValueError):
@@ -65,7 +74,11 @@ class Sign:
 
         Returns:
             string -- Returns the unencrypted value.
+
+        Raises:
+            InvalidSecretKey -- Thrown if the secret key is missing.
         """
+        self._require_key()
         f = Fernet(self.key)
 
         if not value:
