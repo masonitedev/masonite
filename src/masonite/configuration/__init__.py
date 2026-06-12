@@ -1,2 +1,2 @@
 from .helpers import config
-from .Configuration import Configuration
+from .Configuration import Configuration, deep_merge

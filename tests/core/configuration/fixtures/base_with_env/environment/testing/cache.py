@@ -1,0 +1,3 @@
+STORES = {
+    "default": "redis",
+}
