@@ -50,6 +50,7 @@ class TestCase(unittest.TestCase):
         self.application: "Application" = application
         self.original_class_mocks = {}
 
+        self._original_config_location = application.make("config.location")
         self._acting_as = {}
         self._test_cookies = {}
         self._test_headers = {}
@@ -85,6 +86,7 @@ class TestCase(unittest.TestCase):
         """Define code that should be run after each unit tests."""
         self.withoutCsrf()
         self.withoutExceptionsHandling()
+        self.application.bind("config.location", self._original_config_location)
         self._acting_as = {}
         self._test_cookies = {}
         self._test_session = {}
