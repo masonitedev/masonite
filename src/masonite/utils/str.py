@@ -81,8 +81,11 @@ def add_query_params(url: str, query_params: dict) -> str:
     """Add query params dict to a given url (which can already contain some query parameters)."""
     path_result = parse.urlsplit(url)
 
+    # Use netloc (not hostname) so a non-default port and any userinfo are
+    # preserved: hostname drops them, turning e.g. http://host:9000 into
+    # http://host and breaking redirects to URLs with explicit ports.
     base_url = (
-        f"{path_result.scheme}://{path_result.hostname}" if path_result.hostname else ""
+        f"{path_result.scheme}://{path_result.netloc}" if path_result.netloc else ""
     )
     base_path = path_result.path
 
