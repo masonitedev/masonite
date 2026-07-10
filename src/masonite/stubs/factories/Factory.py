@@ -1,6 +1,6 @@
 from masoniteorm.factories import Factory
 
-from app.models.__model__ import __model__
+from __model_module__ import __model__
 
 
 class __class__:

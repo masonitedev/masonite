@@ -3,7 +3,7 @@ import inflection
 import os
 
 from ..utils.filesystem import make_directory, render_stub_file, get_module_dir
-from ..utils.location import factories_path
+from ..utils.location import factories_path, models_path
 from .Command import Command
 
 
@@ -27,8 +27,12 @@ class MakeFactoryCommand(Command):
             name += "Factory"
 
         model = inflection.camelize(self.option("model") or name[: -len("Factory")])
+        model_module = (
+            models_path(model, absolute=False).replace("/", ".").replace("\\", ".")
+        )
 
         content = render_stub_file(self.get_factories_path(), name)
+        content = content.replace("__model_module__", model_module)
         content = content.replace("__model__", model)
 
         filename = f"{name}.py"

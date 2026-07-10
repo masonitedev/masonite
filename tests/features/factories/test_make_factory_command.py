@@ -1,6 +1,10 @@
+import importlib
 import os
 
+from masoniteorm.factories import Factory
+
 from tests import TestCase
+from tests.integrations.app.User import User
 from src.masonite.utils.location import factories_path
 
 
@@ -25,7 +29,10 @@ class TestMakeFactoryCommand(TestCase):
             with open(target) as f:
                 content = f.read()
             self.assertIn("class FakeGeneratedFactory:", content)
-            self.assertIn("from app.models.FakeGenerated import FakeGenerated", content)
+            self.assertIn(
+                "from tests.integrations.app.FakeGenerated import FakeGenerated",
+                content,
+            )
             self.assertIn("Factory.register(FakeGenerated,", content)
         finally:
             self._cleanup(target, init_file, original_init)
@@ -42,7 +49,9 @@ class TestMakeFactoryCommand(TestCase):
             self.craft("factory", "Post --model=Article")
             with open(target) as f:
                 content = f.read()
-            self.assertIn("from app.models.Article import Article", content)
+            self.assertIn(
+                "from tests.integrations.app.Article import Article", content
+            )
             self.assertIn("Factory.register(Article,", content)
         finally:
             self._cleanup(target, init_file, original_init)
@@ -62,4 +71,57 @@ class TestMakeFactoryCommand(TestCase):
             )
             self.craft("factory", "FakeGenerated --force").assertSuccess()
         finally:
+            self._cleanup(target, init_file, original_init)
+
+    def test_generated_factory_can_make_and_create_real_records(self):
+        """End-to-end: generate a factory, import it for real, and confirm it
+        actually produces (and persists) model instances via masoniteorm's
+        Factory engine -- not just that the file's text looks right."""
+        init_file = factories_path("__init__.py")
+        original_init = ""
+        if os.path.exists(init_file):
+            with open(init_file) as f:
+                original_init = f.read()
+
+        target = factories_path("UserFactory.py")
+        created_id = None
+        try:
+            self.craft("factory", "User").assertSuccess()
+
+            with open(target) as f:
+                content = f.read()
+            content = content.replace(
+                "return {}",
+                "return {\n"
+                '            "name": faker.name(),\n'
+                '            "email": faker.unique.email(),\n'
+                '            "password": "secret",\n'
+                "        }",
+            )
+            with open(target, "w") as f:
+                f.write(content)
+
+            module = importlib.import_module(
+                "tests.integrations.databases.factories.UserFactory"
+            )
+            importlib.reload(module)
+            module.UserFactory.register()
+
+            made = Factory(User).make()
+            self.assertIsInstance(made, User)
+            self.assertTrue(made.name)
+            # make() only builds the in-memory model, it never touches the
+            # database, so no primary key has been assigned yet.
+            self.assertNotIn("id", made.__attributes__)
+
+            created = Factory(User).create()
+            created_id = created.id
+            self.assertIsNotNone(created.id)
+
+            found = User.where("id", created.id).first()
+            self.assertIsNotNone(found)
+            self.assertEqual(found.email, created.email)
+        finally:
+            if created_id is not None:
+                User.where("id", created_id).delete()
             self._cleanup(target, init_file, original_init)
