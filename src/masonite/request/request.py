@@ -117,6 +117,36 @@ class Request(ValidatesRequest, AuthorizesRequest):
         """Get value from session for the given key."""
         return old_helper(key, default)
 
+    def paginate(
+        self, query, per_page: int = 15, page_name: str = "page", simple: bool = False
+    ) -> "Paginator":
+        """Paginate a query builder or model using `page` (and optionally
+        `per_page`) read from the current request's query string, and wrap
+        the result in a request-aware Paginator that also exposes `links`
+        (first/prev/next/last).
+
+        `query` can be a Model class/instance or any query builder that
+        implements `.paginate()`/`.simple_paginate()` -- this method doesn't
+        run the query itself, it only reads the request and calls through.
+        """
+        from ..pagination import Paginator
+
+        # Both are request-overridable: `?page=2&per_page=50` wins over the
+        # `per_page` default passed by the caller.
+        page = int(self.input(page_name, default=1) or 1)
+        per_page = int(self.input("per_page", default=per_page) or per_page)
+
+        if simple:
+            result = query.simple_paginate(per_page, page)
+        else:
+            result = query.paginate(per_page, page)
+
+        # Every other query param (sort, filters, ...) needs to survive into
+        # the generated links; only the page number itself gets swapped per
+        # link, so it's excluded here and re-added by Paginator.url_for_page.
+        query_params = {k: v for k, v in self.all().items() if k != page_name}
+        return Paginator(result, self.get_path(), query_params, page_name=page_name)
+
     def is_not_safe(self) -> bool:
         """Check if the current request is considered 'safe', meaning that the request method is
         GET, OPTIONS or HEAD."""
