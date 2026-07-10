@@ -96,3 +96,11 @@ def models_path(relative_path="", absolute=True):
 
     The relative path can be returned instead by setting absolute=False."""
     return _build_path("models.location", relative_path, absolute)
+
+
+def factories_path(relative_path="", absolute=True):
+    """Build the absolute path to the project factories directory or build the absolute path to a given
+    file relative to the project factories directory.
+
+    The relative path can be returned instead by setting absolute=False."""
+    return _build_path("factories.location", relative_path, absolute)

@@ -11,6 +11,7 @@ from src.masonite.utils.location import (
     jobs_path,
     resources_path,
     models_path,
+    factories_path,
 )
 
 
@@ -115,3 +116,19 @@ class TestLocation(TestCase):
         self.assertEqual("tests/integrations/app/admin/Log.py", location)
         location = models_path(absolute=False)
         self.assertEqual(location, "tests/integrations/app/")
+
+    def test_factories_path(self):
+        location = factories_path("UserFactory.py")
+        self.assertTrue(
+            location.endswith("tests/integrations/databases/factories/UserFactory.py")
+        )
+        location = factories_path("package/PostFactory.py")
+        self.assertTrue(
+            location.endswith(
+                "tests/integrations/databases/factories/package/PostFactory.py"
+            )
+        )
+        location = factories_path("UserFactory.py", absolute=False)
+        self.assertEqual(
+            "tests/integrations/databases/factories/UserFactory.py", location
+        )

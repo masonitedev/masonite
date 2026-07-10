@@ -114,6 +114,7 @@ class Kernel:
 
         self.application.bind("migrations.location", "databases/migrations")
         self.application.bind("seeds.location", "databases/seeds")
+        self.application.bind("factories.location", "databases/factories")
 
         self.application.bind("resolver", config("database.db"))
 
