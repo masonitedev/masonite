@@ -184,5 +184,17 @@ class WelcomeController(Controller):
     def server_error(self, view: View):
         raise Exception("unknown error")
 
+    def paginate_users(self, request: Request):
+        # Returning a Paginator directly auto-serializes to the
+        # {data, meta, links} JSON envelope via Response.view().
+        return request.paginate(User, per_page=2)
+
+    def paginate_users_view(self, request: Request, view: View):
+        # Same paginator, rendered server-side through the paginate_links()
+        # view helper instead of returned as JSON.
+        return view.render(
+            "pagination", {"paginator": request.paginate(User, per_page=2)}
+        )
+
     def __call__(self):
         return "welcome"

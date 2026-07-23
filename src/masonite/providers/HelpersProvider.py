@@ -5,6 +5,7 @@ from ..providers import Provider
 from ..configuration import config
 from ..helpers import UrlsHelper, MixHelper, optional
 from ..facades import Dump
+from ..pagination import paginate_links
 
 
 class HelpersProvider(Provider):
@@ -34,5 +35,8 @@ class HelpersProvider(Provider):
                 "dd": Dump.dd,
                 "can": self.application.make("gate").allows,
                 "cannot": self.application.make("gate").denies,
+                # Renders Previous/page-numbers/Next HTML for a Paginator,
+                # e.g. {{ paginate_links(paginator) }} in a template.
+                "paginate_links": paginate_links,
             }
         )
