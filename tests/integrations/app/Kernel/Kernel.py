@@ -116,6 +116,9 @@ class Kernel:
             "migrations.location", "tests/integrations/databases/migrations"
         )
         self.application.bind("seeds.location", "tests/integrations/databases/seeds")
+        self.application.bind(
+            "factories.location", "tests/integrations/databases/factories"
+        )
 
         self.application.bind("resolver", config("database.db"))
 
